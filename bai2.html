@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  .slider {
+    height: 400px; /* Desired height of the slider */
+    margin-top: 100px; /* Push the top down */
+    margin-bottom: auto; /* Push the bottom up */
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: grid; /* Use grid for centering */
+    align-items: center; /* Center align vertically */
+  }
+
+  .slide-track {
+    display: flex;
+    width: calc(250px * 18); /* Width of all scroll content */
+    animation: scroll 40s linear infinite; /* Auto-scroll */
+    justify-content: center; /* Center align slide elements */
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-250px * 9)); /* Move the entire content of 18 images */
+    }
+  }
+
+  .slide {
+    height: 200px;
+    width: 250px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    perspective: 100px;
+    transition: transform 0.5s ease-in-out, filter 0.5s ease;
+    position: relative; /* Set relative position for z-index usage */
+    z-index: 1; /* Hide image when not displayed */
+    margin-right: 300px; /* Distance between images */
+  }
+
+  .slide img {
+    width: 100%; /* Ensure images fill the slide */
+    height: 100%; /* Ensure images fill the slide */
+    object-fit: cover; /* Ensures images do not stretch or squish when scaled */
+  }
+
+  .slide:not(.active) img {
+    filter: blur(5px); /* Blur effect for non-current image */
+  }
+
+  .active {
+    transform: translateX(-50%) scale(1.5); /* Zoom in on the current image */
+    z-index: 2; /* Ensure image is on top */
+    filter: none; /* Remove blur effect */
+  }
+</style>
+</head>
+<body>
+<div class="slider">
+    <div class="slide-track">
+      <div class="slide active">
+        <img src="https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/03/anh-hoat-hinh-1.jpg" height="300" width="250" alt="" />
+      </div>
+      <div class="slide">
+        <img src="https://img.pikbest.com/wp/202408/yellow-duck-cartoon-mascot-with-info-graphics-business-pie-chart-on-a-cute-backdrop-in-3d-rendering_9843766.jpg!bw700" height="500" width="250" alt="" />
+      </div>
+      <div class="slide">
+        <img src="https://img.lostbird.vn/600x-/2018/11/11/472557/timon-the_lion_king.jpg" height="300" width="250" alt="" />
+      </div>
+      <div class="slide">
+        <img src="https://png.pngtree.com/png-vector/20240130/ourlarge/pngtree-cartoon-animal-watercolor-illustration-with-duck-png-image_11572334.png" height="300" width="250" alt="" />
+      </div>
+      <div class="slide">
+        <img src="https://png.pngtree.com/png-vector/20240208/ourlarge/pngtree-duck-cartoon-character-png-image_11721111.png" height="300" width="250" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.querySelector('.slider');
+    const slideTrack = document.querySelector('.slide-track');
+    const slides = Array.from(slideTrack.querySelectorAll('.slide'));
+
+    let isAnimating = false;
+    let currentSlide = 0;
+
+    function resetAnimation() {
+      slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+    }
+
+    function animateSlide() {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      // Tính toán vị trí giữa của slider
+      const sliderRect = slider.getBoundingClientRect();
+      const sliderCenterX = sliderRect.left + sliderRect.width / 2;
+
+      // Tìm slide nào gần vị trí giữa nhất
+      let closestSlide = slides[0];
+      let closestDistance = Math.abs(sliderCenterX - closestSlide.getBoundingClientRect().left);
+      slides.forEach((slide) => {
+        const distance = Math.abs(sliderCenterX - slide.getBoundingClientRect().left);
+        if (distance < closestDistance) {
+          closestSlide = slide;
+          closestDistance = distance;
+        }
+      });
+
+      // Kích hoạt hiệu ứng phóng to và làm mờ cho slide đó
+      closestSlide.classList.add('active');
+      slides.forEach((slide) => {
+        if (slide !== closestSlide) {
+          slide.classList.remove('active');
+        }
+      });
+
+      setTimeout(() => {
+        isAnimating = false;
+      }, 2000); // Điều chỉnh thời gian phóng to
+    }
+
+    resetAnimation();
+    setInterval(animateSlide, 5000); // Điều chỉnh khoảng thời gian chuyển đổi
+  </script>
+</body>
+</html>
